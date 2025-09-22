@@ -29,7 +29,7 @@ export default function MapView({
   useEffect(() => {
     const fetchBuses = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/buses");
+        const res = await fetch("https://ridebuddy-backend-ptno.onrender.com/api/buses");
         const data = await res.json();
         onBusUpdate(data);
       } catch (err) {
@@ -52,7 +52,7 @@ export default function MapView({
     for (const bus of buses) {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/buses/eta?busLat=${bus.lat}&busLon=${bus.lon}&stopLat=${selectedEndStop.lat}&stopLon=${selectedEndStop.lon}`
+          `https://ridebuddy-backend-ptno.onrender.com/api/buses/eta?busLat=${bus.lat}&busLon=${bus.lon}&stopLat=${selectedEndStop.lat}&stopLon=${selectedEndStop.lon}`
         );
 
         if (!res.ok) continue;
