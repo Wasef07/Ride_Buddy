@@ -1,0 +1,175 @@
+:root {
+  --map-bg-color: #f0f4f8;
+  --sidebar-width: 380px;
+  --card-bg: #ffffff;
+  --card-border-radius: 12px;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.live-map-page {
+  background-color: var(--map-bg-color);
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column; /* Changed to column */
+}
+
+.live-map-page .container-fluid {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  flex: 1; /* Allows container to grow */
+}
+
+.sidebar-col {
+  height: calc(100vh - 180px); /* Adjusted height */
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.form-control {
+  padding-left: 2.5rem;
+}
+
+.map-col {
+  height: calc(100vh - 180px); /* Adjusted height */
+  min-height: 500px;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid #dee2e6;
+}
+
+.search-results {
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.sidebar-content .card:last-child {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-content .card:last-child .card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.bus-list-container {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0;
+  min-height: 200px;
+}
+
+.bus-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.75rem !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  transition: background-color 0.2s ease;
+  margin: 0 !important;
+}
+
+.bus-list-item:last-child {
+  border-bottom: none !important;
+}
+
+.bus-list-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.bus-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.bus-name {
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.25rem;
+}
+
+.bus-location {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.bus-eta {
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.eta-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+}
+
+.bus-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bus-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.bus-list-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.bus-list-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@media (max-width: 991.98px) {
+  .sidebar-col, .map-col {
+    height: auto;
+  }
+  
+  .sidebar-col {
+    max-height: 50vh;
+  }
+  
+  .map-col {
+    height: 50vh;
+    margin-top: 1rem;
+    min-height: 400px;
+  }
+  
+  .bus-list-container {
+    max-height: 300px;
+  }
+}

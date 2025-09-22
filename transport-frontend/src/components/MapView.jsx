@@ -99,8 +99,8 @@ export default function MapView({
       style={{ height: "100%", width: "100%" }}
     >
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
 
       {/* Focus on selected bus */}

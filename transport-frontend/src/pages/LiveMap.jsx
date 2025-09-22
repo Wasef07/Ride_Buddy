@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button, ListGroup, Spinner, Badge } from "react-bootstrap";
-import { FaSearch, FaSyncAlt, FaBusAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { Container, Row, Col, Card, Form, ListGroup, Spinner, Badge } from "react-bootstrap";
+import { FaSearch, FaBusAlt, FaMapMarkerAlt, FaClock, FaRoute } from "react-icons/fa";
 import MapView from "../components/MapView";
-import stopsData from "../data/stops"; 
+import stopsData from "../data/stops";
+import './LiveMap.css';
 
 export default function LiveMap() {
   const [buses, setBuses] = useState([]);
@@ -13,74 +14,58 @@ export default function LiveMap() {
   const [selectedEndStop, setSelectedEndStop] = useState(null);
   const [searchStartTerm, setSearchStartTerm] = useState("");
   const [searchEndTerm, setSearchEndTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [followBus, setFollowBus] = useState(true);
 
-  // Load stops from local dataset
   useEffect(() => {
     setStops(stopsData);
-    setLastUpdated(new Date());
+    setTimeout(() => setLoading(false), 1500);
+    const timer = setInterval(() => setLastUpdated(new Date()), 60000);
+    return () => clearInterval(timer);
   }, []);
 
-  // Filter stops
-  const filteredStartStops = stops.filter((stop) =>
-    stop.name.toLowerCase().includes(searchStartTerm.toLowerCase())
-  );
-  const filteredEndStops = stops.filter((stop) =>
-    stop.name.toLowerCase().includes(searchEndTerm.toLowerCase())
-  );
+  const filteredStartStops = searchStartTerm ? stops.filter(s => s.name.toLowerCase().includes(searchStartTerm.toLowerCase())) : [];
+  const filteredEndStops = searchEndTerm ? stops.filter(s => s.name.toLowerCase().includes(searchEndTerm.toLowerCase())) : [];
 
-  // Filter buses based on start & end
-  const filteredBuses = buses.filter((bus) => {
+  const filteredBuses = buses.filter(bus => {
     if (!selectedStartStop || !selectedEndStop) return true;
-    const hasStart = bus.route.some(
-      (point) =>
-        point[0] === selectedStartStop.lat && point[1] === selectedStartStop.lon
-    );
-    const hasEnd = bus.route.some(
-      (point) =>
-        point[0] === selectedEndStop.lat && point[1] === selectedEndStop.lon
-    );
+    const hasStart = bus.route.some(p => p[0] === selectedStartStop.lat && p[1] === selectedStartStop.lon);
+    const hasEnd = bus.route.some(p => p[0] === selectedEndStop.lat && p[1] === selectedEndStop.lon);
     return hasStart && hasEnd;
   });
 
-  // Helper function to render ETA properly
   const renderETA = (busId) => {
     const etaData = etas[busId];
-    if (!selectedEndStop) {
-      return "Select destination";
-    }
-    if (!etaData) {
-      return "Calculating...";
-    }
+    if (!selectedEndStop) return <span className="text-muted">Select destination</span>;
+    if (!etaData) return <Spinner animation="border" size="sm" />;
     
-    // Handle the ETA data properly
     const { eta, status } = etaData;
     if (typeof eta === 'number') {
-      return `${eta} min (${status})`;
-    } else if (eta === "Error") {
-      return "ETA unavailable";
-    } else {
-      return `${eta} min (${status})`;
+      return (
+        <Badge pill bg={status === 'delayed' ? 'danger' : 'success'} className="eta-badge">
+          <FaClock className="me-1" /> {eta} min
+        </Badge>
+      );
     }
+    return <span className="text-warning">Unavailable</span>;
   };
 
   return (
-    <>
-      {/* Header */}
+    <div className="live-map-page">
+      {/* New Header - matching your screenshot */}
       <div className="bg-primary text-white py-3">
         <Container>
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              <h2 className="fw-bold mb-1">Live Bus Tracking</h2>
-              <p>Track buses in real-time across India</p>
+              <h1 className="fw-bold mb-1">Live Bus Tracking</h1>
+              <p className="mb-0 opacity-90">Track buses in real-time across India</p>
             </div>
             <div className="text-end">
-              <Badge bg="success" className="me-2">
+              <Badge bg="success">
                 <span className="me-1">●</span> Live Updates
               </Badge>
-              <small className="d-block">
+              <small className="d-block mt-1">
                 Last updated: {lastUpdated.toLocaleTimeString()}
               </small>
             </div>
@@ -89,153 +74,119 @@ export default function LiveMap() {
       </div>
 
       {/* Main Layout */}
-      <Container fluid className="p-3" style={{ height: "calc(100vh - 110px)" }}>
+      <Container fluid className="p-lg-4 p-3 h-100">
         <Row className="h-100">
           {/* Sidebar */}
-          <Col md={3} className="h-100 overflow-auto pe-3">
-            {/* Search Card */}
-            <Card className="mb-3 shadow-sm">
-              <Card.Body>
-                <h5 className="fw-semibold mb-3">
-                  <FaSearch className="me-2 text-primary" />
-                  Find Stops
-                </h5>
-                <Form.Group className="mb-3">
-                  <Form.Label>Start Stop</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={searchStartTerm}
-                    onChange={(e) => setSearchStartTerm(e.target.value)}
-                    placeholder="Enter start stop..."
-                  />
-                  {searchStartTerm && (
-                    <ListGroup className="mt-2">
-                      {filteredStartStops.map((stop) => (
-                        <ListGroup.Item
-                          key={stop.id}
-                          action
-                          onClick={() => {
-                            setSelectedStartStop(stop);
-                            setSearchStartTerm(stop.name); 
-                          }}
-                        >
-                          🟢 {stop.name}
-                        </ListGroup.Item>
-                      ))}
-                      {filteredStartStops.length === 0 && (
-                        <ListGroup.Item>No stops found</ListGroup.Item>
-                      )}
-                    </ListGroup>
-                  )}
-                </Form.Group>
+          <Col lg={4} xl={3} className="sidebar-col">
+            <div className="sidebar-content">
+              {/* Search Card */}
+              <Card className="shadow-sm mb-3 border-0">
+                <Card.Body>
+                  <h5 className="fw-semibold mb-3">
+                    <FaRoute className="me-2 text-primary"/>
+                    Find Stops
+                  </h5>
+                  
+                  <Form.Group className="mb-3">
+                    <Form.Label>Start Stop</Form.Label>
+                    <div className="position-relative">
+                      <FaMapMarkerAlt className="input-icon text-success" />
+                      <Form.Control
+                        type="text"
+                        value={searchStartTerm}
+                        onChange={(e) => setSearchStartTerm(e.target.value)}
+                        placeholder="Enter start stop..."
+                        className="ps-5"
+                      />
+                    </div>
+                    {searchStartTerm && (
+                      <ListGroup className="mt-2 search-results">
+                        {filteredStartStops.map((stop) => (
+                          <ListGroup.Item key={stop.id} action onClick={() => { setSelectedStartStop(stop); setSearchStartTerm(stop.name); }}>
+                            {stop.name}
+                          </ListGroup.Item>
+                        ))}
+                        {filteredStartStops.length === 0 && <ListGroup.Item disabled>No stops found</ListGroup.Item>}
+                      </ListGroup>
+                    )}
+                  </Form.Group>
 
-                <Form.Group>
-                  <Form.Label>Destination Stop</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={searchEndTerm}
-                    onChange={(e) => setSearchEndTerm(e.target.value)}
-                    placeholder="Enter destination stop..."
-                  />
-                  {searchEndTerm && (
-                    <ListGroup className="mt-2">
-                      {filteredEndStops.map((stop) => (
-                        <ListGroup.Item
-                          key={stop.id}
-                          action
-                          onClick={() => {
-                            setSelectedEndStop(stop);
-                            setSearchEndTerm(stop.name); 
-                          }}
-                        >
-                          🔴 {stop.name}
-                        </ListGroup.Item>
-                      ))}
-                      {filteredEndStops.length === 0 && (
-                        <ListGroup.Item>No stops found</ListGroup.Item>
-                      )}
-                    </ListGroup>
-                  )}
-                </Form.Group>
-              </Card.Body>
-            </Card>
+                  <Form.Group>
+                    <Form.Label>Destination Stop</Form.Label>
+                     <div className="position-relative">
+                       <FaMapMarkerAlt className="input-icon text-danger" />
+                      <Form.Control
+                        type="text"
+                        value={searchEndTerm}
+                        onChange={(e) => setSearchEndTerm(e.target.value)}
+                        placeholder="Enter destination stop..."
+                        className="ps-5"
+                      />
+                    </div>
+                    {searchEndTerm && (
+                      <ListGroup className="mt-2 search-results">
+                        {filteredEndStops.map((stop) => (
+                          <ListGroup.Item key={stop.id} action onClick={() => { setSelectedEndStop(stop); setSearchEndTerm(stop.name); }}>
+                            {stop.name}
+                          </ListGroup.Item>
+                        ))}
+                        {filteredEndStops.length === 0 && <ListGroup.Item disabled>No stops found</ListGroup.Item>}
+                      </ListGroup>
+                    )}
+                  </Form.Group>
+                </Card.Body>
+              </Card>
 
-            {/* Active Buses */}
-            <Card className="shadow-sm">
-              <Card.Body>
-                <h5 className="fw-semibold mb-3">
-                  <FaBusAlt className="me-2 text-primary" />
-                  Active Buses
-                </h5>
-                {loading ? (
-                  <div className="text-center">
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    Loading...
+              {/* Active Buses */}
+              <Card className="shadow-sm flex-grow-1 border-0">
+                <Card.Body className="d-flex flex-column">
+                  <h5 className="fw-semibold mb-3">
+                    <FaBusAlt className="me-2 text-primary" />
+                    Active Buses
+                  </h5>
+                  <div className="bus-list-container flex-grow-1">
+                    {loading ? (
+                      <div className="text-center p-5"><Spinner animation="border" /></div>
+                    ) : filteredBuses.length === 0 ? (
+                      <p className="text-muted text-center p-5">No buses found for this route.</p>
+                    ) : (
+                      <ListGroup variant="flush">
+                        {filteredBuses.map((bus) => (
+                          <ListGroup.Item key={bus.id} action onClick={() => { setSelectedBus(bus); setFollowBus(true); }} className="bus-list-item">
+                            <div className="bus-info">
+                              <strong className="bus-name">{bus.name}</strong>
+                              <span className="bus-location">
+                                Lat: {bus.lat.toFixed(4)}, Lon: {bus.lon.toFixed(4)}
+                              </span>
+                            </div>
+                            <div className="bus-eta">
+                              {renderETA(bus.id)}
+                            </div>
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
+                    )}
                   </div>
-                ) : filteredBuses.length === 0 ? (
-                  <p className="text-muted">No buses available for this route.</p>
-                ) : (
-                  <ListGroup>
-                    {filteredBuses.map((bus) => (
-                      <ListGroup.Item
-                        key={bus.id}
-                        action
-                        onClick={() => {
-                          setSelectedBus(bus);
-                          setFollowBus(true);
-                        }}
-                      >
-                        <strong>{bus.name}</strong>
-                        <br />
-                        <FaMapMarkerAlt className="text-danger me-1" />
-                        Lat: {bus.lat.toFixed(4)}, Lon: {bus.lon.toFixed(4)}
-                        <br />
-                        ETA: {renderETA(bus.id)}
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                )}
-
-                <div className="d-flex justify-content-between mt-3">
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => window.location.reload()}
-                  >
-                    <FaSyncAlt className="me-2" />
-                    Refresh
-                  </Button>
-                  <Button
-                    variant={followBus ? "success" : "outline-secondary"}
-                    size="sm"
-                    onClick={() => setFollowBus(!followBus)}
-                  >
-                    {followBus ? "Following Bus" : "Free Mode"}
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </div>
           </Col>
 
           {/* Map */}
-          <Col md={9} className="h-100">
-            <Card className="h-100 shadow-sm">
-              <Card.Body className="p-0">
-                <MapView
-                  onBusUpdate={setBuses}
-                  selectedBus={selectedBus}
-                  selectedStartStop={selectedStartStop}
-                  selectedEndStop={selectedEndStop}
-                  etas={etas}
-                  setEtas={setEtas}
-                  buses={filteredBuses}
-                  followBus={followBus}
-                />
-              </Card.Body>
-            </Card>
+          <Col lg={8} xl={9} className="map-col">
+            <MapView
+              onBusUpdate={setBuses}
+              selectedBus={selectedBus}
+              selectedStartStop={selectedStartStop}
+              selectedEndStop={selectedEndStop}
+              etas={etas}
+              setEtas={setEtas}
+              buses={filteredBuses}
+              followBus={followBus}
+            />
           </Col>
         </Row>
       </Container>
-    </>
+    </div>
   );
 }

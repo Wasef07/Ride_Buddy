@@ -28,7 +28,7 @@ function App() {
       </main>
       <footer className="bg-dark text-white py-3 mt-auto">
         <Container className="text-center">
-          <p className="mb-1">© {new Date().getFullYear()} KolkataTransit</p>
+          <p className="mb-1">© {new Date().getFullYear()} RideBuddy</p>
           <p className="small mb-0">
             Made with ❤️ for smarter public transportation
           </p>
