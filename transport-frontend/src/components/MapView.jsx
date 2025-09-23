@@ -9,6 +9,8 @@ import {
   useMap,
 } from "react-leaflet";
 import busIcon from "./busIcon";
+import startIcon from "./startIcon";
+import endIcon from "./endIcon";
 
 function ChangeView({ center }) {
   const map = useMap();
@@ -133,7 +135,7 @@ export default function MapView({
       {selectedStartStop && (
         <Marker
           position={[selectedStartStop.lat, selectedStartStop.lon]}
-          icon={busIcon}
+          icon={startIcon}
         >
           <Popup>🟢 Start: {selectedStartStop.name}</Popup>
         </Marker>
@@ -141,7 +143,7 @@ export default function MapView({
       {selectedEndStop && (
         <Marker
           position={[selectedEndStop.lat, selectedEndStop.lon]}
-          icon={busIcon}
+          icon={endIcon}
         >
           <Popup>🔴 Destination: {selectedEndStop.name}</Popup>
         </Marker>

@@ -1,0 +1,48 @@
+.live-updates-page {
+  background-color: #f8f9fa;
+}
+
+.live-badge {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.live-dot-alert {
+  animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.update-list-container {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.update-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem 0.5rem !important;
+}
+
+.update-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  margin-top: 0.25rem;
+}
+
+.update-content {
+  flex-grow: 1;
+}
+
+/* New styles for the status badge */
+.status-badge {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  display: flex;
+  align-items: center;
+}

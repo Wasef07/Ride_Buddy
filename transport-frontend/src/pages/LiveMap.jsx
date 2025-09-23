@@ -63,7 +63,7 @@ export default function LiveMap() {
             </div>
             <div className="text-end">
               <Badge bg="success">
-                <span className="me-1">●</span> Live Updates
+                <span className="live-dot-alert me-1">●</span> Live Updates
               </Badge>
               <small className="d-block mt-1">
                 Last updated: {lastUpdated.toLocaleTimeString()}

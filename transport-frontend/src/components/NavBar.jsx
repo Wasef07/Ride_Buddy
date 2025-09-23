@@ -10,6 +10,7 @@ export default function AppNavbar() {
     { path: "/about", label: "About Us" },
     { path: "/livemap", label: "Live Map" },
     { path: "/routes", label: "Routes" },
+    { path: "/updates", label: "Live Updates" },
     { path: "/planner", label: "Trip Planner" },
 
   ];
