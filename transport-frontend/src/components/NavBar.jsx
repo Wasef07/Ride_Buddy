@@ -11,6 +11,7 @@ export default function AppNavbar() {
     { path: "/livemap", label: "Live Map" },
     { path: "/routes", label: "Routes" },
     { path: "/updates", label: "Live Updates" },
+    { path: "/assistant", label: "AI Assistant" },
     { path: "/planner", label: "Trip Planner" },
 
   ];

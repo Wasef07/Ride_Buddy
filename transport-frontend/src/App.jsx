@@ -9,6 +9,7 @@ import TripPlanner from "./pages/TripPlanner";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import LiveUpdates from "./pages/LiveUpdates";
+import AIAssistant from "./pages/AIAssistant";
 import { Container } from "react-bootstrap";
 import { ToastContainer } from 'react-toastify'; // 1. IMPORT ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // 2. IMPORT the CSS for styling
@@ -58,6 +59,7 @@ function App() {
             <Route path="/livemap" element={<LiveMap buses={buses} />} />
             <Route path="/updates" element={<LiveUpdates />} />
             <Route path="/about" element={<About />} /> 
+            <Route path="/assistant" element={<AIAssistant />} />
             <Route path="/planner" element={<TripPlanner />} /> 
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
